@@ -673,9 +673,10 @@ export function oxlintConfig(overrides: OxlintOptions = {}): OxlintOptions {
 
 interface TailwindOptions {
   /**
-   * Path to the Tailwind entry CSS, so the plugin can resolve class names.
+   * Path to the Tailwind entry CSS. Required — the plugin needs it to resolve
+   * class names.
    */
-  entryPoint?: string
+  entryPoint: string
   /**
    * Directory scanned to check the plugin is installed.
    *
@@ -696,7 +697,7 @@ interface TailwindOptions {
  * (`pnpm add -D eslint-plugin-better-tailwindcss`). If it is missing, a warning
  * is logged and an empty config is returned so oxlint does not crash.
  */
-export function tailwind({ entryPoint, cwd = process.cwd() }: TailwindOptions = {}): OxlintOptions {
+export function tailwind({ entryPoint, cwd = process.cwd() }: TailwindOptions): OxlintOptions {
   if (!getInstalledPackages(cwd).has(TAILWIND_PLUGIN)) {
     console.warn(
       `[@letstri/oxc-config] Tailwind linting needs "${TAILWIND_PLUGIN}". ` +
@@ -707,7 +708,7 @@ export function tailwind({ entryPoint, cwd = process.cwd() }: TailwindOptions = 
 
   return defineOxlintConfig({
     jsPlugins: [TAILWIND_PLUGIN],
-    ...(entryPoint ? { settings: { 'better-tailwindcss': { entryPoint } } } : {}),
+    settings: { 'better-tailwindcss': { entryPoint } },
     rules: {
       'better-tailwindcss/enforce-consistent-class-order': 'error',
       'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
