@@ -8,9 +8,16 @@ this repo. Read before making changes.
 `@letstri/oxc-config` — a shared [oxlint](https://oxc.rs) + [oxfmt](https://oxc.rs)
 config library, in the spirit of `@antfu/eslint-config`.
 
-- `src/index.ts` — the library. Exports `oxlintConfig()` and `oxfmtConfig()`.
-- `oxlint.config.ts` / `oxfmt.config.ts` — the repo dogfoods its own config.
-- Build with `tsdown` → `dist/`.
+A pnpm workspace (`pnpm-workspace.yaml`):
+
+- `src/index.ts` — the library (root package `@letstri/oxc-config`). Exports
+  `oxlintConfig()` and `oxfmtConfig()`. Build with `tsdown` → `dist/`.
+- `oxlint.config.ts` / `oxfmt.config.ts` — the root dogfoods its own config and
+  ignores `playground` (each workspace member lints/formats itself).
+- `playground/` — `@playground/next`, a Next.js app consuming the config via
+  `workspace:*`. Real-world test bed for plugin auto-detection (react, nextjs,
+  typescript, tailwind). After changing `src/`, run `pnpm run build`, then
+  `pnpm --filter @playground/next run lint` to smoke-test.
 
 ## Golden rule: keep the README in sync
 
@@ -22,8 +29,9 @@ Update the README whenever you change:
 
 - the public API — `oxlintConfig` / `oxfmtConfig` signatures, options, or defaults;
 - the plugin auto-detection map or the manual toggles (`typescript`, `react`,
-  `vue`, `next`, `vitest`, `jest`);
-- install steps, peer dependencies, or supported editors;
+  `vue`, `next`, `vitest`, `jest`, `tailwind`);
+- install steps, peer dependencies (e.g. `eslint-plugin-better-tailwindcss` is
+  an optional peer the user installs themselves), or supported editors;
 - the editor setup (`.vscode/settings.json`, `.zed/settings.json`).
 
 If a change has no user-facing effect (internal refactor, comments, tests), the

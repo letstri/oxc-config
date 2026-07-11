@@ -1,3 +1,7 @@
 import { oxfmtConfig } from './src/index.ts'
 
-export default oxfmtConfig()
+export default oxfmtConfig({
+  override: {
+    ignorePatterns: ['playground'],
+  },
+})

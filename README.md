@@ -72,14 +72,41 @@ export default oxfmtConfig()
 ### Plugins
 
 Framework plugins are enabled automatically by detecting dependencies in the
-nearest `package.json` (`typescript`, `react`, `vue`, `next`, `vitest`, `jest`).
-Toggle any of them manually — useful when the dependency lives in a nested
-workspace such as `apps/web/package.json`:
+nearest `package.json` (`typescript`, `react`, `vue`, `next`, `vitest`, `jest`,
+`tailwind`). Toggle any of them manually — useful when the dependency lives in a
+nested workspace such as `apps/web/package.json`:
 
 ```ts
 export default oxlintConfig({
   vue: true, // force on
   jest: false, // force off
+})
+```
+
+### Tailwind
+
+`tailwind: true` enables [`eslint-plugin-better-tailwindcss`](https://github.com/schoero/eslint-plugin-better-tailwindcss)
+(auto-detected from a `tailwindcss` dependency). The plugin is an **optional peer
+dependency** — install it yourself:
+
+```bash
+pnpm add -D eslint-plugin-better-tailwindcss
+```
+
+If Tailwind is enabled but the plugin is missing, the config logs a reminder and
+skips Tailwind linting instead of crashing. Point the plugin at your Tailwind
+entry CSS so it can resolve class names:
+
+```ts
+export default oxlintConfig({
+  tailwind: true,
+  override: {
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: 'src/styles/globals.css',
+      },
+    },
+  },
 })
 ```
 

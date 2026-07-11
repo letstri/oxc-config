@@ -595,7 +595,7 @@ const basePlugins: OxlintPlugin[] = ['import', 'unicorn', 'jsdoc', 'node', 'prom
 
 const pluginToggles = {
   typescript: { packages: ['typescript'], plugins: ['typescript'] },
-  react: { packages: ['react'], plugins: ['react', 'jsx-a11y'] },
+  react: { packages: ['react'], plugins: ['react', 'jsx-a11y', 'react-perf'] },
   vue: { packages: ['vue'], plugins: ['vue'] },
   next: { packages: ['next'], plugins: ['nextjs'] },
   vitest: { packages: ['vitest'], plugins: ['vitest'] },
@@ -603,6 +603,10 @@ const pluginToggles = {
 } satisfies Record<string, { packages: string[]; plugins: OxlintPlugin[] }>
 
 type ToggleName = keyof typeof pluginToggles
+
+const tailwindConfig = defineOxlintConfig({
+  jsPlugins: ['eslint-plugin-better-tailwindcss'],
+})
 
 function getInstalledPackages(cwd: string): Set<string> {
   const names = new Set<string>()
@@ -622,8 +626,7 @@ function getInstalledPackages(cwd: string): Set<string> {
   return names
 }
 
-function resolvePlugins(options: OxlintConfigOptions): OxlintPlugin[] {
-  const installed = getInstalledPackages(options.cwd ?? process.cwd())
+function resolvePlugins(options: OxlintConfigOptions, installed: Set<string>): OxlintPlugin[] {
   const plugins = [...basePlugins]
   for (const name of Object.keys(pluginToggles) as ToggleName[]) {
     const toggle = pluginToggles[name]
@@ -636,6 +639,16 @@ function resolvePlugins(options: OxlintConfigOptions): OxlintPlugin[] {
 }
 
 interface OxlintConfigOptions extends Partial<Record<ToggleName, boolean>> {
+  /**
+   * Enable `eslint-plugin-better-tailwindcss`. Auto-detected from a `tailwindcss`
+   * dependency; set it explicitly when Tailwind lives in a nested workspace.
+   *
+   * The plugin is an optional peer dependency — install it yourself
+   * (`pnpm add -D eslint-plugin-better-tailwindcss`). If it is missing, a warning
+   * is logged and Tailwind linting is skipped. Point the plugin at your entry
+   * CSS via `override.settings`.
+   */
+  tailwind?: boolean
   /**
    * Deep-merged over the base config via defu.
    */
@@ -652,9 +665,59 @@ interface OxfmtConfigOptions {
   override?: OxfmtOptions
 }
 
+/**
+ * Build an oxlint config.
+ *
+ * Framework plugins (`typescript`, `react`, `vue`, `next`, `vitest`, `jest`,
+ * `tailwind`) are auto-enabled by detecting their package in the nearest
+ * `package.json`. If a dependency is not found there — e.g. it lives in a nested
+ * workspace like `apps/web/package.json` — its plugin stays off, so enable it
+ * manually:
+ *
+ * @example
+ * ```ts
+ * // auto-detect from the current package.json
+ * export default oxlintConfig()
+ * ```
+ * @example
+ * ```ts
+ * // dep lives in a nested workspace — turn the plugin on by hand
+ * export default oxlintConfig({ vue: true })
+ * ```
+ * @example
+ * ```ts
+ * // Tailwind, pointed at the entry CSS so classes can be resolved
+ * export default oxlintConfig({
+ *   tailwind: true,
+ *   override: {
+ *     settings: { 'better-tailwindcss': { entryPoint: 'src/styles/globals.css' } },
+ *   },
+ * })
+ * ```
+ */
+const TAILWIND_PLUGIN = 'eslint-plugin-better-tailwindcss'
+
 export function oxlintConfig(options: OxlintConfigOptions = {}): OxlintOptions {
   const { override = {} } = options
-  return defu(override, { plugins: resolvePlugins(options) }, baseOxlintConfig) as OxlintOptions
+  const installed = getInstalledPackages(options.cwd ?? process.cwd())
+
+  let tailwind = options.tailwind ?? installed.has('tailwindcss')
+  if (tailwind && !installed.has(TAILWIND_PLUGIN)) {
+    // The plugin is an optional peer dependency — don't register it (oxlint
+    // would fail to load a missing JS plugin), just tell the user to add it.
+    console.warn(
+      `[@letstri/oxc-config] Tailwind linting needs "${TAILWIND_PLUGIN}". ` +
+        `Install it: pnpm add -D ${TAILWIND_PLUGIN}`,
+    )
+    tailwind = false
+  }
+
+  return defu(
+    override,
+    { plugins: resolvePlugins(options, installed) },
+    tailwind ? tailwindConfig : {},
+    baseOxlintConfig,
+  ) as OxlintOptions
 }
 
 export function oxfmtConfig({ override = {} }: OxfmtConfigOptions = {}): OxfmtOptions {
