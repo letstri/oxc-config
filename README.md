@@ -4,8 +4,8 @@ Opinionated, shared [oxlint](https://oxc.rs/docs/guide/usage/linter.html) and [o
 
 > [!NOTE]
 > This is an **opinionated** config — it ships a curated set of rules and
-> formatting defaults meant to work out of the box. Override anything you
-> disagree with via the [`override`](#overrides) option.
+> formatting defaults meant to work out of the box. [Override](#overrides)
+> anything you disagree with.
 
 ## Install
 
@@ -44,7 +44,7 @@ Set up @letstri/oxc-config (oxlint + oxfmt) in this project:
    - "format:check": "oxfmt --check"
 6. Framework plugins auto-enable from the nearest package.json. If a framework
    dep (react/vue/next/vitest/jest/typescript) lives in a nested workspace,
-   enable it manually, e.g. `oxlintConfig({ vue: true })`.
+   enable it manually, e.g. `oxlintConfig({ plugins: ['vue'] })`.
 7. Add the VS Code and Zed editor settings from the @letstri/oxc-config README.
 8. Run `pnpm lint` and `pnpm format` and fix anything reported.
 ````
