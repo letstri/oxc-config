@@ -89,7 +89,7 @@ export default oxlintConfig({ rules: { 'no-console': 'off' } }, { plugins: ['vue
 ### Tailwind
 
 `tailwindPlugin({ entryPoint })` returns a config chunk for
-[`eslint-plugin-better-tailwindcss`](https://github.com/schoero/eslint-plugin-better-tailwindcss).
+[`oxlint-tailwindcss`](https://github.com/sergioazoc/oxlint-tailwindcss) (Tailwind v4).
 Pass it as an argument to `oxlintConfig`:
 
 ```ts
@@ -107,7 +107,18 @@ ones above rather than overwriting them.
 Options:
 
 - `entryPoint` (required) — your Tailwind entry CSS, so the plugin can resolve
-  class names.
+  class names. In a monorepo, pass an array of glob → CSS mappings (last match
+  wins, so end with a `'**'` catch-all):
+
+  ```ts
+  tailwindPlugin({
+    entryPoint: [
+      { files: 'packages/ui/**', use: 'packages/ui/src/styles.css' },
+      { files: '**', use: 'src/global.css' },
+    ],
+  })
+  ```
+
 - `ignoreClasses` — class names to exempt from `no-unknown-classes` (e.g. classes
   a component library generates that the plugin can't resolve):
 
@@ -118,7 +129,7 @@ Options:
 The plugin is an **optional peer dependency** — install it yourself:
 
 ```bash
-pnpm add -D eslint-plugin-better-tailwindcss
+pnpm add -D oxlint-tailwindcss
 ```
 
 If the plugin is missing, `tailwindPlugin()` throws with an install hint.

@@ -38,7 +38,7 @@ Update the README whenever you change:
 
 - the public API — `oxlintConfig` / `oxfmtConfig` signatures, options, or defaults;
 - the plugin auto-detection map (`pluginDetectors`), or the `tailwindPlugin()` helper;
-- install steps, peer dependencies (e.g. `eslint-plugin-better-tailwindcss` is
+- install steps, peer dependencies (e.g. `oxlint-tailwindcss` is
   an optional peer the user installs themselves), or supported editors;
 - the editor setup (`.vscode/settings.json`, `.zed/settings.json`).
 
