@@ -27,30 +27,7 @@ export const vscodeSettings = {
 
 const oxfmtFormatter = { language_server: { name: 'oxfmt' } }
 
-function formatOnSave(withFix = false) {
-  return {
-    format_on_save: 'on',
-    prettier: { allowed: false },
-    formatter: withFix ? [oxfmtFormatter, { code_action: 'source.fixAll.oxc' }] : [oxfmtFormatter],
-  }
-}
-
-const cssLike = [
-  'CSS',
-  'GraphQL',
-  'Handlebars',
-  'HTML',
-  'JSON',
-  'JSON5',
-  'JSONC',
-  'Less',
-  'Markdown',
-  'MDX',
-  'SCSS',
-  'YAML',
-]
-
-const codeLike = ['JavaScript', 'TypeScript', 'TSX', 'Vue.js']
+const codeFormatter = [oxfmtFormatter, { code_action: 'source.fixAll.oxc' }]
 
 export const zedSettings = {
   lsp: {
@@ -74,8 +51,12 @@ export const zedSettings = {
       },
     },
   },
+  format_on_save: 'on',
+  prettier: { allowed: false },
+  formatter: [oxfmtFormatter],
   languages: {
-    ...Object.fromEntries(cssLike.map(lang => [lang, formatOnSave()])),
-    ...Object.fromEntries(codeLike.map(lang => [lang, formatOnSave(true)])),
+    JavaScript: { formatter: codeFormatter },
+    TypeScript: { formatter: codeFormatter },
+    TSX: { formatter: codeFormatter },
   },
 }
