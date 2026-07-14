@@ -288,7 +288,6 @@ const baseOxlintConfig = defineOxlintConfig({
     ],
     'no-unassigned-vars': 'warn',
     'preserve-caught-error': 'warn',
-    'react/react-in-jsx-scope': 'off',
     'jsx-a11y/anchor-has-content': 'warn',
     'jsx-a11y/click-events-have-key-events': 'warn',
     'jsx-a11y/control-has-associated-label': 'warn',
@@ -301,6 +300,8 @@ const baseOxlintConfig = defineOxlintConfig({
     'jsx-a11y/no-redundant-roles': 'warn',
     'jsx-a11y/no-static-element-interactions': 'warn',
     'jsx-a11y/prefer-tag-over-role': 'warn',
+    'react/react-in-jsx-scope': 'off',
+    'react/no-unstable-nested-components': ['warn', { allowAsProps: true }],
     'react/rules-of-hooks': 'error',
     'react/exhaustive-deps': [
       'error',
