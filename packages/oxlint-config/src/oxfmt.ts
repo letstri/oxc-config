@@ -19,6 +19,6 @@ const baseOxfmtConfig = defineOxfmtConfig({
  * Build an oxfmt config. Pass any number of config objects; they are deep-merged
  * over the base config via defu.
  */
-export function oxfmtConfig(...overrides: OxfmtOptions[]): OxfmtOptions {
+export function config(...overrides: OxfmtOptions[]): OxfmtOptions {
   return defu({}, ...overrides, baseOxfmtConfig) as OxfmtOptions
 }

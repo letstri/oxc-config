@@ -30,7 +30,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
-  packages/oxc-config:
+  packages/oxlint-config:
     dependencies:
       '@clack/prompts':
         specifier: ^1.7.0

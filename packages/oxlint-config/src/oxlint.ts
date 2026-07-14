@@ -367,7 +367,7 @@ const basePlugins = [
 type BasePlugin = (typeof basePlugins)[number]
 
 /**
- * Oxlint config accepted by {@link oxlintConfig}. Same as oxlint's own config,
+ * Oxlint config accepted by {@link config}. Same as oxlint's own config,
  * but `plugins` can't include the always-on base plugins.
  */
 export type OxlintConfig = Omit<NonNullable<OxlintOptions>, 'plugins'> & {
@@ -409,26 +409,26 @@ function resolvePlugins(cwd: string): OxlintPlugin[] {
  * @example
  * ```ts
  * // auto-detect from the current package.json
- * export default oxlintConfig()
+ * export default config()
  * ```
  * @example
  * ```ts
  * // enable a plugin by hand, tweak a rule
- * export default oxlintConfig({ plugins: ['vue'], rules: { 'no-console': 'off' } })
+ * export default config({ plugins: ['vue'], rules: { 'no-console': 'off' } })
  * ```
  * @example
  * ```ts
  * // compose Tailwind — its plugins merge with the ones above, not overwrite
- * export default oxlintConfig(
+ * export default config(
  *   { plugins: ['react', 'jsx-a11y'] },
  *   tailwindPlugin({ entryPoint: 'app/globals.css' }),
  * )
  * ```
  */
-export function oxlintConfig(...overrides: OxlintConfig[]): OxlintOptions {
+export function config(...configs: OxlintConfig[]): OxlintOptions {
   const merged = defu(
     {},
-    ...overrides,
+    ...configs,
     { plugins: resolvePlugins(process.cwd()) },
     baseOxlintConfig,
   ) as OxlintOptions

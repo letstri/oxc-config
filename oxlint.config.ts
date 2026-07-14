@@ -1,8 +1,8 @@
-import { oxlintConfig } from './packages/oxc-config/src/index.ts'
-import { tailwindPlugin } from './packages/oxc-config/src/tailwind.ts'
+import { config } from './packages/oxlint-config/src/index.ts'
+import { tailwindConfig } from './packages/oxlint-config/src/tailwind.ts'
 
-export default oxlintConfig(
-  tailwindPlugin({
+export default config(
+  tailwindConfig({
     entryPoint: [
       {
         files: 'playground/**',

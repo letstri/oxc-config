@@ -1,6 +1,6 @@
 import process from 'node:process'
 
-import { defineConfig as defineOxlintConfig } from 'oxlint'
+import { defineConfig } from 'oxlint'
 
 import type { OxlintConfig } from './oxlint.ts'
 import { getInstalledPackages } from './utils.ts'
@@ -38,10 +38,10 @@ interface TailwindOptions {
 
 /**
  * Tailwind v4 linting via [`oxlint-tailwindcss`](https://github.com/sergioazoc/oxlint-tailwindcss).
- * Pass the result as an argument to `oxlintConfig`:
+ * Pass the result as an argument to `config`:
  *
  * ```ts
- * export default oxlintConfig(tailwindPlugin({
+ * export default config(tailwindConfig({
  *   entryPoint: 'app/globals.css',
  *   ignoreClasses: ['toaster'],
  * }))
@@ -50,27 +50,24 @@ interface TailwindOptions {
  * The plugin is an optional peer dependency — install it yourself
  * (`pnpm add -D oxlint-tailwindcss`). If it is missing, an error is thrown.
  */
-export function tailwindPlugin({
+export function tailwindConfig({
   entryPoint,
   ignoreClasses = [],
   cwd = process.cwd(),
 }: TailwindOptions): OxlintConfig {
   if (!getInstalledPackages(cwd).has(TAILWIND_PLUGIN)) {
     throw new Error(
-      `[@letstri/oxc-config] Tailwind linting needs "${TAILWIND_PLUGIN}". ` +
+      `[@letstri/oxlint-config] Tailwind linting needs "${TAILWIND_PLUGIN}". ` +
         `Install it: pnpm add -D ${TAILWIND_PLUGIN}`,
     )
   }
 
-  return defineOxlintConfig({
+  return defineConfig({
     jsPlugins: [TAILWIND_PLUGIN],
     settings: { tailwindcss: { entryPoint } },
     rules: {
       'tailwindcss/enforce-sort-order': 'error',
       'tailwindcss/enforce-consistent-line-wrapping': 'off',
-      // Off on purpose: its fixer overlaps enforce-sort-order and the two
-      // deadlock oxlint's single-pass fixer, so neither applies.
-      'tailwindcss/no-unnecessary-whitespace': 'off',
       'tailwindcss/enforce-canonical': 'error',
       'tailwindcss/consistent-variant-order': 'error',
       'tailwindcss/enforce-consistent-important-position': 'error',

@@ -1,6 +1,6 @@
 {
-  "name": "@letstri/oxc-config",
-  "version": "0.9.1",
+  "name": "@letstri/oxlint-config",
+  "version": "1.0.0",
   "description": "Opinionated Oxlint and Oxfmt configs",
   "homepage": "https://github.com/letstri/oxc-config#readme",
   "bugs": {
@@ -11,10 +11,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/letstri/oxc-config.git",
-    "directory": "packages/oxc-config"
+    "directory": "packages/oxlint-config"
   },
   "bin": {
-    "oxc-config": "./dist/cli.mjs"
+    "oxlint-config": "./dist/cli.mjs"
   },
   "files": [
     "dist"
@@ -26,6 +26,10 @@
     ".": {
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
+    },
+    "./oxfmt": {
+      "types": "./dist/oxfmt.d.mts",
+      "import": "./dist/oxfmt.mjs"
     },
     "./tailwind": {
       "types": "./dist/tailwind.d.mts",

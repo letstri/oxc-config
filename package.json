@@ -1,7 +1,7 @@
 {
-  "name": "@letstri/oxc-config-monorepo",
+  "name": "@letstri/oxlint-config-monorepo",
   "private": true,
-  "description": "Monorepo for @letstri/oxc-config",
+  "description": "Monorepo for @letstri/oxlint-config",
   "license": "MIT",
   "author": "Valerii Strilets",
   "repository": {
@@ -19,7 +19,7 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "check": "run-p lint check-types format:check",
-    "publish": "cd packages/oxc-config && pnpm publish",
+    "publish": "cd packages/oxlint-config && pnpm publish",
     "update": "taze -r -I major"
   },
   "devDependencies": {

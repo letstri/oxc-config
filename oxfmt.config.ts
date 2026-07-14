@@ -1,5 +1,5 @@
-import { oxfmtConfig } from './packages/oxc-config/src/index.ts'
+import { config } from './packages/oxlint-config/src/oxfmt.ts'
 
-export default oxfmtConfig({
+export default config({
   ignorePatterns: ['playground'],
 })

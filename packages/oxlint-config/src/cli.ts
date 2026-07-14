@@ -40,19 +40,25 @@ function writeConfig(path: string, content: string, force: boolean): string {
   return existed ? 'overwritten' : 'created'
 }
 
-const template = (fn: 'oxlintConfig' | 'oxfmtConfig') =>
-  `import { ${fn} } from '@letstri/oxc-config'\n\nexport default ${fn}()\n`
+// Both entries export `config`; only the specifier differs.
+const SPECIFIER = {
+  oxlint: '@letstri/oxlint-config',
+  oxfmt: '@letstri/oxlint-config/oxfmt',
+} as const
+
+const template = (target: keyof typeof SPECIFIER) =>
+  `import { config } from '${SPECIFIER[target]}'\n\nexport default config()\n`
 
 type Target = 'oxlint' | 'oxfmt' | 'vscode' | 'zed'
 
 const TARGETS: Record<Target, { label: string; run: (force: boolean) => string }> = {
   oxlint: {
     label: 'oxlint.config.ts',
-    run: force => `oxlint: ${writeConfig('oxlint.config.ts', template('oxlintConfig'), force)}`,
+    run: force => `oxlint: ${writeConfig('oxlint.config.ts', template('oxlint'), force)}`,
   },
   oxfmt: {
     label: 'oxfmt.config.ts',
-    run: force => `oxfmt: ${writeConfig('oxfmt.config.ts', template('oxfmtConfig'), force)}`,
+    run: force => `oxfmt: ${writeConfig('oxfmt.config.ts', template('oxfmt'), force)}`,
   },
   vscode: {
     label: 'VS Code settings (.vscode)',
@@ -94,10 +100,10 @@ function version(): string {
   return (JSON.parse(readFileSync(url, 'utf-8')) as { version: string }).version
 }
 
-const HELP = `oxc-config — set up @letstri/oxc-config in your project
+const HELP = `oxlint-config — set up @letstri/oxlint-config in your project
 
 Usage:
-  oxc-config [flags]
+  oxlint-config [flags]
 
 Flags (default: prompt for what to set up):
   --oxlint       create oxlint.config.ts
