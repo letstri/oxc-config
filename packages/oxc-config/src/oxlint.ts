@@ -483,54 +483,6 @@ const baseOxlintConfig = defineOxlintConfig({
         ],
       },
     },
-    {
-      files: ['**/*.md/**/*.?([cm])[jt]s?(x)'],
-      rules: {
-        'no-alert': 'off',
-        'no-labels': 'off',
-        'no-lone-blocks': 'off',
-        'no-unused-expressions': 'off',
-        'no-unused-labels': 'off',
-        'no-unused-vars': 'off',
-        'unicode-bom': 'off',
-        'no-redeclare': 'off',
-        'no-use-before-define': 'off',
-        'typescript/consistent-type-imports': 'off',
-        'typescript/explicit-function-return-type': 'off',
-        'typescript/no-namespace': 'off',
-        'typescript/no-require-imports': 'off',
-      },
-    },
-    {
-      files: ['**/scripts/**/*.?([cm])[jt]s?(x)'],
-      rules: {
-        'typescript/explicit-function-return-type': 'off',
-      },
-    },
-    {
-      files: ['**/*.js', '**/*.cjs'],
-      rules: {
-        'typescript/no-require-imports': 'off',
-      },
-    },
-    {
-      files: ['**/*.config.?([cm])[jt]s?(x)', '**/*.config.*.?([cm])[jt]s?(x)'],
-      rules: {
-        'typescript/explicit-function-return-type': 'off',
-      },
-    },
-    {
-      files: ['**/e2e/**/*'],
-      rules: {
-        'react/rules-of-hooks': 'off',
-      },
-    },
-    {
-      files: ['**/monaco-worker.ts'],
-      rules: {
-        'import/default': 'off',
-      },
-    },
   ],
 })
 
