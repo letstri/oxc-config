@@ -73,7 +73,6 @@ async function pickTargets(flags: Set<string>): Promise<Target[] | null> {
   if (flagged.length > 0) {
     return flagged
   }
-  // No flags: prompt when interactive, otherwise set up everything.
   if (isCI() || !process.stdout.isTTY) {
     return ALL
   }

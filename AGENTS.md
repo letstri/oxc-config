@@ -26,13 +26,14 @@ monorepo so more can be added without another restructure):
   `--oxfmt`, `--vscode`, `--zed`) skip the prompt, and CI/non-TTY with no flags
   falls back to all. Two tsdown entries (`index`, `cli`) → `dist/`.
 
-Shared TS compiler options live in `tsconfig.base.json`; each package (and the
-root, for the two config files) extends it.
+Each package is self-contained: `packages/oxc-config/tsconfig.json` holds its own
+compiler options (no shared/root `tsconfig`).
 
 - `oxlint.config.ts` / `oxfmt.config.ts` — the root dogfoods the core config
   (imported from `packages/oxc-config/src`, so linting needs no build) and
   ignores `playground` for formatting. Do **not** switch these to import built
-  `dist` — that would make `pnpm check` require a build first.
+  `dist` — that would make `pnpm check` require a build first. The root has no
+  `tsconfig`, so these two files are lint-checked but not type-checked.
 - `playground/` — `@playground/next`, a Next.js app consuming the config via
   `workspace:*`. Real-world test bed for plugin auto-detection (react, nextjs,
   typescript, tailwind). After changing a package, run `pnpm run build`, then
@@ -79,8 +80,8 @@ pnpm build   # pnpm -r run build — every package, in topological order
 pnpm check   # run-p lint + check-types + format:check in parallel
 ```
 
-All commands run from the repo root. `check-types` runs a root `tsc` (the two
-root config files) then `pnpm -r run check-types`. A husky `pre-commit` hook runs
+All commands run from the repo root. `check-types` delegates to
+`pnpm -r run check-types` (each package runs its own `tsc`). A husky `pre-commit` hook runs
 `pnpm check` — a commit fails if any task does. `oxc-config`'s `prepublishOnly`
 builds its `dist/` then copies the root README in (`copy-readme`); the publish
 workflow runs `pnpm -r publish`.

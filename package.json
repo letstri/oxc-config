@@ -13,7 +13,7 @@
   "scripts": {
     "build": "pnpm -r run build",
     "dev": "pnpm -r --parallel run dev",
-    "check-types": "tsc --noEmit && pnpm -r run check-types",
+    "check-types": "pnpm -r run check-types",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",
@@ -23,7 +23,6 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@types/node": "^26.1.1",
     "husky": "^9.1.7",
     "npm-run-all2": "^9.0.2",
     "oxfmt": "^0.58.0",

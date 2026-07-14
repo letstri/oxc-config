@@ -1,8 +1,3 @@
-/**
- * Paths ignored by both {@link oxlintConfig} and {@link oxfmtConfig}. Shared so
- * linting and formatting skip exactly the same files — generated output, caches,
- * lockfiles, vendored docs (`skills`), etc.
- */
 export const ignorePatterns = [
   '**/.DS_Store',
   '**/node_modules',
