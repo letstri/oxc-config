@@ -17,14 +17,15 @@ monorepo so more can be added without another restructure):
 
 - `packages/oxc-config/` — the core library `@letstri/oxc-config`. `src/` is
   split by concern: `oxlint.ts` (`oxlintConfig` + plugin auto-detection),
-  `oxfmt.ts` (`oxfmtConfig`), `tailwind.ts` (`tailwindPlugin()`), `utils.ts`
-  (shared `getInstalledPackages`), and `index.ts` (barrel). `cli.ts` is the
+  `oxfmt.ts` (`oxfmtConfig`), `tailwind.ts` (`tailwindPlugin()`, exported from the
+  `@letstri/oxc-config/tailwind` subpath — not the barrel), `utils.ts` (shared
+  `getInstalledPackages`), and `index.ts` (barrel). `cli.ts` is the
   `oxc-config` bin — a single `init` command (hand-parsed argv, no CLI framework)
   that scaffolds the TS configs and deep-merges the VS Code + Zed configs from
   the templates in `editors.ts`. It prompts interactively (`@clack/prompts`
   multiselect) when run with no flags in a TTY; per-target flags (`--oxlint`,
   `--oxfmt`, `--vscode`, `--zed`) skip the prompt, and CI/non-TTY with no flags
-  falls back to all. Two tsdown entries (`index`, `cli`) → `dist/`.
+  falls back to all. Three tsdown entries (`index`, `cli`, `tailwind`) → `dist/`.
 
 Each package is self-contained: `packages/oxc-config/tsconfig.json` holds its own
 compiler options (no shared/root `tsconfig`).

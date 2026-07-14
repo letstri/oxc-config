@@ -94,10 +94,12 @@ export default oxlintConfig({ rules: { 'no-console': 'off' } }, { plugins: ['vue
 
 `tailwindPlugin({ entryPoint })` returns a config chunk for
 [`oxlint-tailwindcss`](https://github.com/sergioazoc/oxlint-tailwindcss) (Tailwind v4).
-Pass it as an argument to `oxlintConfig`:
+It ships from the `@letstri/oxc-config/tailwind` subpath — pass it as an argument
+to `oxlintConfig`:
 
 ```ts
-import { oxlintConfig, tailwindPlugin } from '@letstri/oxc-config'
+import { oxlintConfig } from '@letstri/oxc-config'
+import { tailwindPlugin } from '@letstri/oxc-config/tailwind'
 
 export default oxlintConfig(
   { plugins: ['react', 'jsx-a11y'] },

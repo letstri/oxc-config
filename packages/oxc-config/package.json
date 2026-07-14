@@ -26,6 +26,10 @@
     ".": {
       "types": "./dist/index.d.mts",
       "import": "./dist/index.mjs"
+    },
+    "./tailwind": {
+      "types": "./dist/tailwind.d.mts",
+      "import": "./dist/tailwind.mjs"
     }
   },
   "publishConfig": {
