@@ -20,7 +20,7 @@ jobs:
       - run: pnpm i --frozen-lockfile
       - run: pnpm run lint
       - run: pnpm run check-types
-      - run: pnpm run build
+      - run: pnpm --filter "./packages/*" run build
       - run: pnpm -r publish --no-git-checks
         env:
           NPM_CONFIG_PROVENANCE: true
