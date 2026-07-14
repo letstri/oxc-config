@@ -91,16 +91,18 @@ workflow runs `pnpm -r publish`.
 
 - Keep `pluginDetectors` and `basePlugins` typed with `OxlintPlugin` (derived from
   oxlint's own config type) so invalid plugin names fail at compile time.
-- **Keep the config flat — one `rules` block.** oxlint does not support extglob
-  patterns (`?([cm])ts`, `*.?([cm])[jt]s?(x)`) in `overrides.files`; such a block
-  silently never matches, so every rule in it is dead. The old per-language
-  overrides were exactly that and did nothing. Rules that need TS/JSX syntax are
-  no-ops elsewhere, so the root is usually right.
-  The one exception is the `**/e2e/**` override that turns off
-  `react/rules-of-hooks` (Playwright's `use` fixture callback reads as React's
-  `use` hook). Plain globs like `**/e2e/**` and `**/*.ts` **do** match — if you
-  add another override, prove the glob matches first (lint a file under it and
-  check the rule is actually suppressed), otherwise you are adding dead rules.
+- **The config is flat — one `rules` block, no `overrides`.** oxlint does not
+  support extglob patterns (`?([cm])ts`, `*.?([cm])[jt]s?(x)`) in `overrides.files`;
+  such a block silently never matches, so every rule in it is dead. The old
+  per-language overrides were exactly that and did nothing. Rules that need TS/JSX
+  syntax are no-ops elsewhere, so the root is usually right.
+  Plain globs (`**/*.ts`, `**/*.vue`, `**/e2e/**`) *do* match, so an override is
+  possible — but if you add one, prove the glob matches first: lint a file under it
+  and confirm the rule is suppressed **and** that unrelated rules still fire there.
+  Otherwise you are adding dead rules. Note `overrides.plugins` *replaces* the base
+  plugin list rather than subtracting from it, and the list is only known after
+  runtime detection — so any plugin-scoping override has to be built inside
+  `oxlintConfig`, not in `baseOxlintConfig`.
 - Do not add core-JS `'off'` entries meant only for TS files (`no-unused-vars`,
   `constructor-super`, …). Without working overrides they would disable the rule
   for JavaScript too, where nothing else catches it.
