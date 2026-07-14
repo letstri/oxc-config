@@ -40,12 +40,15 @@ root, for the two config files) extends it.
 
 ## Golden rule: keep the READMEs in sync
 
-**After any change that affects how a package is used, update that package's
-`README.md` in the same change.** Each package's README is its public contract —
-it must never drift from the code. `packages/oxc-config/README.md` documents that
-package; the root `README.md` is a monorepo index (package list + dev workflow).
+**After any change that affects how the package is used, update the root
+`README.md` in the same change.** The root `README.md` is the single source of
+truth and the public contract — it must never drift from the code. It is **not**
+committed inside the package: `packages/oxc-config/scripts/copy-readme.ts` copies
+it into `packages/oxc-config/README.md` on `prepublishOnly`, and that in-package
+copy is gitignored (`packages/oxc-config/.gitignore`). Edit the root README, never
+the generated copy.
 
-Update a package README whenever you change:
+Update the root README whenever you change:
 
 - the public API — `oxlintConfig` / `oxfmtConfig` signatures, options, or defaults;
 - the plugin auto-detection map (`pluginDetectors`), or the `tailwindPlugin()` helper;
@@ -55,6 +58,9 @@ Update a package README whenever you change:
 
 If a change has no user-facing effect (internal refactor, comments, tests), the
 README does not need to change — but say so explicitly in your summary.
+
+The publish flow copies the README, so `packages/oxc-config/README.md` may exist
+locally as an untracked, gitignored artifact — that is expected; don't commit it.
 
 ## Keep this file in sync too
 
@@ -75,8 +81,9 @@ pnpm check   # run-p lint + check-types + format:check in parallel
 
 All commands run from the repo root. `check-types` runs a root `tsc` (the two
 root config files) then `pnpm -r run check-types`. A husky `pre-commit` hook runs
-`pnpm check` — a commit fails if any task does. Each package's `prepublishOnly`
-builds its `dist/`; the publish workflow runs `pnpm -r publish`.
+`pnpm check` — a commit fails if any task does. `oxc-config`'s `prepublishOnly`
+builds its `dist/` then copies the root README in (`copy-readme`); the publish
+workflow runs `pnpm -r publish`.
 
 ## Conventions
 

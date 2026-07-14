@@ -32,10 +32,11 @@
     "access": "public"
   },
   "scripts": {
+    "prepublishOnly": "pnpm run build && pnpm run copy-readme",
     "build": "tsdown",
     "dev": "tsdown --watch",
     "check-types": "tsc --noEmit",
-    "prepublishOnly": "pnpm run build"
+    "copy-readme": "node ./scripts/copy-readme.ts"
   },
   "dependencies": {
     "@clack/prompts": "^1.7.0",
