@@ -91,6 +91,23 @@ workflow runs `pnpm -r publish`.
 
 - Keep `pluginDetectors` and `basePlugins` typed with `OxlintPlugin` (derived from
   oxlint's own config type) so invalid plugin names fail at compile time.
+- **The config is flat — one `rules` block, no `overrides`.** oxlint does not
+  support extglob patterns (`?([cm])ts`, `*.?([cm])[jt]s?(x)`) in `overrides.files`;
+  such a block silently never matches, so every rule in it is dead. The old
+  per-language overrides were exactly that and did nothing. If you ever need to
+  scope rules by file, verify the glob actually matches first (plain `**/*.ts`
+  works) — otherwise put the rule at the root. Rules that need TS/JSX syntax are
+  no-ops elsewhere, so root is usually right.
+- Do not add core-JS `'off'` entries meant only for TS files (`no-unused-vars`,
+  `constructor-super`, …). Without working overrides they would disable the rule
+  for JavaScript too, where nothing else catches it.
+- **Never restate a rule at its category default.** `categories` already sets
+  `correctness: error`, `suspicious: warn`, `perf: warn`, so listing a
+  correctness rule as `'error'` is a no-op — as is `'off'` on a `restriction`/
+  `style`/`pedantic`/`nursery` rule, which is off by default anyway. Only list a
+  rule to *enable* one its category leaves off, to *deviate* from the category
+  severity, or to pass options. Rule categories come from `declare_oxc_lint!` in
+  oxc's source (`crates/oxc_linter/src/rules/**`), not the config.
 - Ignore globs live once in `src/ignores.ts` and feed both `oxlintConfig` and
   `oxfmtConfig`, so lint and format skip the same paths (incl. `**/*.md`,
   `**/skills`, and AI-assistant configs like `.cursor`/`.windsurf`/`AGENTS.md`).
