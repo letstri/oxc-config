@@ -354,6 +354,16 @@ const baseOxlintConfig = defineOxlintConfig({
     'typescript/prefer-literal-enum-member': 'error',
     'typescript/triple-slash-reference': 'off',
   },
+  overrides: [
+    {
+      // Playwright fixtures take a `use` callback. The react plugin reads that
+      // call as React's `use` hook and reports it outside a component.
+      files: ['**/e2e/**'],
+      rules: {
+        'react/rules-of-hooks': 'off',
+      },
+    },
+  ],
 })
 
 const basePlugins = [

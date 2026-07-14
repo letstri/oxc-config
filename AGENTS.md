@@ -91,13 +91,16 @@ workflow runs `pnpm -r publish`.
 
 - Keep `pluginDetectors` and `basePlugins` typed with `OxlintPlugin` (derived from
   oxlint's own config type) so invalid plugin names fail at compile time.
-- **The config is flat — one `rules` block, no `overrides`.** oxlint does not
-  support extglob patterns (`?([cm])ts`, `*.?([cm])[jt]s?(x)`) in `overrides.files`;
-  such a block silently never matches, so every rule in it is dead. The old
-  per-language overrides were exactly that and did nothing. If you ever need to
-  scope rules by file, verify the glob actually matches first (plain `**/*.ts`
-  works) — otherwise put the rule at the root. Rules that need TS/JSX syntax are
-  no-ops elsewhere, so root is usually right.
+- **Keep the config flat — one `rules` block.** oxlint does not support extglob
+  patterns (`?([cm])ts`, `*.?([cm])[jt]s?(x)`) in `overrides.files`; such a block
+  silently never matches, so every rule in it is dead. The old per-language
+  overrides were exactly that and did nothing. Rules that need TS/JSX syntax are
+  no-ops elsewhere, so the root is usually right.
+  The one exception is the `**/e2e/**` override that turns off
+  `react/rules-of-hooks` (Playwright's `use` fixture callback reads as React's
+  `use` hook). Plain globs like `**/e2e/**` and `**/*.ts` **do** match — if you
+  add another override, prove the glob matches first (lint a file under it and
+  check the rule is actually suppressed), otherwise you are adding dead rules.
 - Do not add core-JS `'off'` entries meant only for TS files (`no-unused-vars`,
   `constructor-super`, …). Without working overrides they would disable the rule
   for JavaScript too, where nothing else catches it.
@@ -117,12 +120,28 @@ workflow runs `pnpm -r publish`.
 - Formatting/lint style is defined by this repo's own config. Run `pnpm format`
   before committing.
 
-## Known non-goals
+## Planned: pnpm workspace rules (blocked on oxlint)
 
-- **Porting [`eslint-plugin-pnpm`](https://github.com/antfu/pnpm-workspace-utils/tree/main/packages/eslint-plugin-pnpm)
-  (catalog enforcement etc.) to an oxlint plugin is not possible.** Those rules
-  lint `package.json` and `pnpm-workspace.yaml`, which needs a custom parser.
-  oxlint (1.73) plugins run on JS/TS/JSX only — `Language` is
-  `"js" | "jsx" | "ts" | "tsx" | "dts"`, no JSON/YAML AST, and it offers no
-  parser services. Don't re-attempt as an oxlint plugin. If revisited, port the
-  rules to a standalone CLI checker (own jsonc/yaml parsing) instead.
+We want to port [`eslint-plugin-pnpm`](https://github.com/antfu/pnpm-workspace-utils/tree/main/packages/eslint-plugin-pnpm)
+(catalog enforcement and friends) as a second package in this monorepo — likely
+`oxlint-pnpm-config`. **It is blocked, not rejected.**
+
+Why it is blocked: those rules lint `package.json` and `pnpm-workspace.yaml`, so
+they need JSON and YAML ASTs. antfu's plugin gets them by swapping in ESLint
+parsers (`jsonc-eslint-parser`, `yaml-eslint-parser`) via `languageOptions.parser`.
+oxlint has no equivalent — as of 1.73 its plugin `Language` is
+`"js" | "jsx" | "ts" | "tsx" | "dts"`, the visitor only walks JS/TS/JSX nodes, and
+it explicitly offers no parser services. A rule written against `package.json`
+would simply never run.
+
+**Trigger to revisit: oxlint gains YAML/JSON (custom-language or custom-parser)
+plugin support.** When that lands, port the rules directly:
+
+- JSON (`package.json`): `json-enforce-catalog`, `json-valid-catalog`,
+  `json-prefer-workspace-settings`
+- YAML (`pnpm-workspace.yaml`): `yaml-no-unused-catalog-item`,
+  `yaml-no-duplicate-catalog-item`, `yaml-valid-packages`, `yaml-enforce-settings`
+
+Until then, do **not** re-attempt this as an oxlint plugin — it cannot work. If
+the rules are needed before oxlint catches up, the fallback is a standalone CLI
+checker that parses jsonc/yaml itself, not an oxlint plugin.
