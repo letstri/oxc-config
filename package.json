@@ -11,6 +11,7 @@
   },
   "type": "module",
   "scripts": {
+    "prepare": "husky",
     "build": "pnpm -r run build",
     "dev": "pnpm -r --parallel run dev",
     "check-types": "pnpm -r run check-types",
@@ -19,8 +20,8 @@
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "check": "run-p lint check-types format:check",
-    "update": "taze -r -I major",
-    "prepare": "husky"
+    "publish": "cd packages/oxc-config && pnpm publish",
+    "update": "taze -r -I major"
   },
   "devDependencies": {
     "husky": "^9.1.7",
