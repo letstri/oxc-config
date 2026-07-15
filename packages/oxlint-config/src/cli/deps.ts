@@ -1,3 +1,5 @@
+import { existsSync, readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import process from 'node:process'
 
 import { cancel, confirm, isCancel } from '@clack/prompts'
@@ -5,6 +7,22 @@ import { addDevDependency, detectPackageManager, removeDependency } from 'nypm'
 
 import { getInstalledPackages } from '../utils.ts'
 import { log } from './log.ts'
+
+// A workspace root: adding lands in the root, so it needs the `--workspace-root`
+// (pnpm) / `--workspaces` (npm/yarn/bun) flag, else pnpm aborts with ADDING_TO_ROOT.
+function isWorkspaceRoot(cwd: string): boolean {
+  if (existsSync(resolve(cwd, 'pnpm-workspace.yaml'))) {
+    return true
+  }
+  try {
+    const pkg = JSON.parse(readFileSync(resolve(cwd, 'package.json'), 'utf-8')) as {
+      workspaces?: unknown
+    }
+    return Boolean(pkg.workspaces)
+  } catch {
+    return false
+  }
+}
 
 export async function ensureDeps(deps: string[], interactive: boolean): Promise<void> {
   const cwd = process.cwd()
@@ -33,7 +51,7 @@ export async function ensureDeps(deps: string[], interactive: boolean): Promise<
     return
   }
   try {
-    await addDevDependency(missing, { cwd })
+    await addDevDependency(missing, { cwd, workspace: isWorkspaceRoot(cwd) })
   } catch {
     log(`Install failed. Run it yourself:\n  ${hint}`)
   }
@@ -65,7 +83,7 @@ export async function removeEslint(flags: Set<string>, interactive: boolean): Pr
     return
   }
   try {
-    await removeDependency(found, { cwd })
+    await removeDependency(found, { cwd, workspace: isWorkspaceRoot(cwd) })
     log(`removed: ${found.join(', ')}`)
   } catch {
     log(`Removal failed. Remove them yourself:\n  ${found.join(', ')}`)
