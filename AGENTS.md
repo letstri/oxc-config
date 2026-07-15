@@ -82,8 +82,10 @@ without re-verifying it.
   plugin names fail at compile time.
 - Ignore globs live once in `src/ignores.ts` and feed both configs, so lint and
   format skip the same paths. Edit that file, not the individual configs.
-- **No useless comments.** A comment earns its place only by stating a constraint
-  the code cannot show — *why* a value is what it is. Don't restate the code, narrate
+- **Don't add comments unless really needed — default to none.** A comment earns
+  its place only by stating a constraint the code cannot show — *why* a value is
+  what it is, or a non-obvious consequence. If in doubt, leave it out and let the
+  code speak. Never restate the code (`// merge the configs` above a merge), narrate
   a change (`// renamed from X`), or re-describe a signature in prose. Usage examples
   belong in the README, not doc blocks; duplicated examples drift.
 - Run `pnpm format` before committing.

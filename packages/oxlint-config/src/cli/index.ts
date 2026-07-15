@@ -23,8 +23,8 @@ if (argv.includes('--help') || argv.includes('-h')) {
 
   const targets = await pickTargets(flags, interactive)
   if (targets !== null) {
-    const wantsOxlint = targets.includes('oxlint') || flags.has('--tailwind')
-    const tailwind = wantsOxlint ? await pickTailwind(flags, interactive) : false
+    const needsOxlintConfig = targets.includes('oxlint') || flags.has('--tailwind')
+    const tailwind = needsOxlintConfig ? await pickTailwind(flags, interactive) : false
 
     if (tailwind !== null) {
       const deps = ['@letstri/oxlint-config', 'oxlint', 'oxfmt']
@@ -35,7 +35,7 @@ if (argv.includes('--help') || argv.includes('-h')) {
       await removeEslint(flags, interactive)
 
       const chosen: Target[] =
-        tailwind && !targets.includes('oxlint') ? ['oxlint', ...targets] : targets
+        needsOxlintConfig && !targets.includes('oxlint') ? ['oxlint', ...targets] : targets
       scaffold(chosen, { entryPoint: tailwind ? tailwind.entryPoint : undefined, force })
     }
   }
