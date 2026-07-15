@@ -25,7 +25,9 @@ npx oxlint-config init
 it does all), plus `--force` to overwrite existing files. It also offers to
 install any missing dependency (`oxlint`, `oxfmt`) with your package manager.
 
-See [Tailwind](#tailwind) to add class linting.
+If ESLint and its plugins are found, `init` offers to uninstall them
+(`--remove-eslint` to skip the prompt). See [Tailwind](#tailwind) to add class
+linting.
 
 ### Editor extensions
 
