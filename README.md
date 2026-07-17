@@ -3,7 +3,7 @@
 Opinionated, shared [oxlint](https://oxc.rs/docs/guide/usage/linter.html) + [oxfmt](https://oxc.rs) config — one `init` and you're set.
 
 ```bash
-npx @letstri/oxlint-config init
+npx @letstri/oxlint-config@latest
 ```
 
 - [Install](#install)
